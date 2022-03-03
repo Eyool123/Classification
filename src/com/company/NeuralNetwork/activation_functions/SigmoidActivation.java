@@ -2,7 +2,9 @@ package com.company.NeuralNetwork.activation_functions;
 
 import com.company.NeuralNetwork.interfaces.IActivationFunction;
 
-public class SigmoidActivation implements IActivationFunction {
+import java.io.Serializable;
+
+public class SigmoidActivation implements IActivationFunction, Serializable {
 
     //calculate the sigmoid activation function
     @Override

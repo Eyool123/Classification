@@ -2,7 +2,9 @@ package com.company.NeuralNetwork.error_functions;
 
 import com.company.NeuralNetwork.interfaces.IErrorFunction;
 
-public class SquareError implements IErrorFunction {
+import java.io.Serializable;
+
+public class SquareError implements IErrorFunction, Serializable {
 
     // Error calculation square function
     // E(g) = (t-g)^2

@@ -1,6 +1,8 @@
 package com.company.NeuralNetwork;
 
-public class Layer {
+import java.io.Serializable;
+
+public class Layer implements Serializable {
 
     public Neuron[] neurons; //array of neurons in layer
 

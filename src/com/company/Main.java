@@ -5,13 +5,41 @@ import com.company.DataProcessing.Personalities.Dim1;
 import com.company.DataProcessing.Tfidf.Tfidf;
 import com.company.DataProcessing.VectorCorpus.CorpusVec;
 import com.company.DataProcessing.WordCorpus.Corpus;
+import com.company.NeuralNetwork.NeuralNetwork;
+import com.company.NeuralNetwork.activation_functions.SigmoidActivation;
+import com.company.NeuralNetwork.error_functions.SquareError;
 
 public class Main {
 
     static String CSV_FILE_PATH =  "src/com/company/files/filterCSVtyped.csv";
+    static String DIM1_DATA_PARTITION =  "src/com/company/files/dim1DataPartition.data";
+    static String DIM1_NEURAL_NETWORK =  "src/com/company/files/dim1Network.data";
 
 
     public static void main(String[] args) {
+
+        DataPartition partition = DataPartition.loadDataFromFile(DIM1_DATA_PARTITION);
+
+        float[][] trainingInputs = partition.featuresVecTrain;
+        float[][] trainingOutputs = partition.classVecTrain;
+
+        int[] neuronsPerLayer = {trainingInputs[0].length, 300, 1};
+
+
+
+
+        NeuralNetwork neuralNetwork = new NeuralNetwork(neuronsPerLayer, new SigmoidActivation(), new SquareError(), 0.5f);
+        neuralNetwork.saveNetworkToFile(DIM1_NEURAL_NETWORK);
+
+        neuralNetwork.fitNetwork(100, trainingInputs, trainingOutputs);
+        neuralNetwork.saveNetworkToFile(DIM1_NEURAL_NETWORK);
+
+
+
+
+    }
+
+    static void generateDim1DataPartition(){
 
         Corpus corpus = Corpus.createCorpusFromFile(CSV_FILE_PATH); // create a corpus from whole csv comments file
         System.out.println("corpus read successfully");
@@ -35,7 +63,7 @@ public class Main {
         DataPartition dataPartition = new DataPartition(corpusVec, 1, 0.7f);
         System.out.println("Data partition created");
 
-
+        dataPartition.saveDataToFile(DIM1_DATA_PARTITION);
 
 
 

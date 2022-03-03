@@ -1,9 +1,12 @@
 package com.company.NeuralNetwork;
 
+import com.company.DataProcessing.DataPartition;
 import com.company.NeuralNetwork.interfaces.IActivationFunction;
 import com.company.NeuralNetwork.interfaces.IErrorFunction;
 
-public class NeuralNetwork {
+import java.io.*;
+
+public class NeuralNetwork implements Serializable {
 
 
     private Layer[] layers;
@@ -41,18 +44,22 @@ public class NeuralNetwork {
     }
 
 
-    public void fitNetwork(int epochs, float[][] inputs, float[][] outputs) throws Exception {
+    public void fitNetwork(int epochs, float[][] inputs, float[][] outputs)  {
 
 //        Random rnd = new Random();
         for (int i=0; i<epochs; i++){
             float error = 0;
 
             for(int j=0; j<inputs.length; j++){
-                error += trainNetwork(inputs[j], outputs[j]);
+                try {
+                    error += trainNetwork(inputs[j], outputs[j]);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             error /= inputs.length;
-            System.out.println("Epoch: "+i+" avg error: "+error);
+            System.out.println("Epoch: "+(i+1)+" avg error: "+error);
         }
 
     }
@@ -91,7 +98,7 @@ public class NeuralNetwork {
 
         //See exception
         if(inputs==null||inputs.length!=layers[0].getNumberOfNeurons()){
-            throw new Exception("Number of inputs must be the same size of input layer in the neural network");
+            throw new Exception("Number of inputs "+  inputs.length +" must be the same size of input layer in the neural network "+ layers[0].getNumberOfNeurons());
         }
 
 
@@ -221,6 +228,49 @@ public class NeuralNetwork {
         }
 
     }
+
+
+    public void saveNetworkToFile(String filePath){
+
+        try {
+
+            FileOutputStream fileOut = new FileOutputStream(filePath);
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+            objectOut.writeObject(this);
+            objectOut.close();
+            objectOut.flush();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            System.out.println("The neural network  was successfully written to a file "+filePath);
+        }
+
+    }
+
+    public static NeuralNetwork loadDataFromFile(String filePath){
+
+        NeuralNetwork neuralNetwork = null;
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(filePath);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            neuralNetwork = (NeuralNetwork) ois.readObject();
+            ois.close();
+            fis.close();
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }finally {
+            System.out.println("Neural network  read from file "+filePath);
+        }
+
+        return neuralNetwork;
+
+    }
+
+
+
 
 
 }

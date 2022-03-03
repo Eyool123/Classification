@@ -2,16 +2,17 @@ package com.company.DataProcessing;
 
 import com.company.DataProcessing.VectorCorpus.CorpusVec;
 
-public class DataPartition {
+import java.io.*;
+
+public class DataPartition implements Serializable {
 
 
+    public float[][] classVecTrain;
+    public float[][] featuresVecTrain; //Feature matrix of documents and tfidf in each
 
-    float[][] classVecTrain;
-    float[][] featuresVecTrain; //Feature matrix of documents and tfidf in each
 
-
-    float[][] classVecTest;
-    float[][] featuresVecTest;
+    public float[][] classVecTest;
+    public float[][] featuresVecTest;
 
 
 
@@ -84,7 +85,52 @@ public class DataPartition {
 
         }
 
+        System.out.println("Train ="+ classVecTrain.length);
 
+        System.out.println("Test ="+ classVecTest.length);
+
+        System.out.println("ind train ="+ trainInd);
+        System.out.println("ind test ="+ testInd);
+
+
+    }
+
+    public void saveDataToFile(String filePath){
+
+        try {
+
+            FileOutputStream fileOut = new FileOutputStream(filePath);
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+            objectOut.writeObject(this);
+            objectOut.close();
+            objectOut.flush();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            System.out.println("The data partition  was successfully written to a file "+filePath);
+        }
+
+    }
+
+    public static DataPartition loadDataFromFile(String filePath){
+
+        DataPartition dataPartition = null;
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(filePath);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            dataPartition = (DataPartition) ois.readObject();
+            ois.close();
+            fis.close();
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }finally {
+            System.out.println("Data partition read from file "+filePath);
+        }
+
+        return dataPartition;
 
     }
 

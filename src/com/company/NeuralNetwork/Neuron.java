@@ -1,8 +1,9 @@
 package com.company.NeuralNetwork;
 
+import java.io.Serializable;
 import java.util.Random;
 
-public class Neuron {
+public class Neuron implements Serializable {
 
     float value; // the value of this neuron
     float[] weights; //the weights from every neuron in the previous layer to this neuron
