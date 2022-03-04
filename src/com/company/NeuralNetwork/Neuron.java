@@ -29,9 +29,9 @@ public class Neuron implements Serializable {
 
         //init weights from prev layer neurons to current neuron
         for(int i=0; i<weights.length; i++){
-            this.weights[i] = rand.nextFloat()*2f-1f; //initialize random weights between 0-1.0
+            this.weights[i] = rand.nextFloat()-0.5f; //initialize random weights between 0-1.0
         }
-        this.bias = rand.nextFloat()*2f-1f; // initialize the bias randomly
+        this.bias = rand.nextFloat()-0.5f; // initialize the bias randomly
     }
 
 

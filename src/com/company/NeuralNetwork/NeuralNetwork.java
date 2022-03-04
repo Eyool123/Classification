@@ -1,10 +1,10 @@
 package com.company.NeuralNetwork;
 
-import com.company.DataProcessing.DataPartition;
 import com.company.NeuralNetwork.interfaces.IActivationFunction;
 import com.company.NeuralNetwork.interfaces.IErrorFunction;
 
 import java.io.*;
+import java.util.Random;
 
 public class NeuralNetwork implements Serializable {
 
@@ -50,6 +50,8 @@ public class NeuralNetwork implements Serializable {
         for (int i=0; i<epochs; i++){
             float error = 0;
 
+            shuffleInputs(inputs, outputs);
+
             for(int j=0; j<inputs.length; j++){
                 try {
                     error += trainNetwork(inputs[j], outputs[j]);
@@ -68,6 +70,7 @@ public class NeuralNetwork implements Serializable {
     // train the network for a given input and an output, returns the mean abs error
     public float trainNetwork(float[] inputVec, float[] targetOutputVec) throws Exception {
 
+
         this.feedForward(inputVec);
 
         this.backPropagate(targetOutputVec);
@@ -75,6 +78,24 @@ public class NeuralNetwork implements Serializable {
         return calculateOutputMeanError();
 
 
+    }
+
+    private void shuffleInputs(float[][] inputVec, float[][] targetOutputVec) {
+        Random rnd = new Random();
+        for (int i = inputVec.length - 1; i > 0; i--)
+        {
+            int index = rnd.nextInt(i + 1);
+            // Simple swap
+            float[] inputTemp = inputVec[index];
+            float[] outputTemp = targetOutputVec[index];
+
+            inputVec[index] = inputVec[i];
+            targetOutputVec[index] = targetOutputVec[i];
+
+            inputVec[i] = inputTemp;
+            targetOutputVec[i] = outputTemp;
+
+        }
     }
 
 
@@ -121,7 +142,6 @@ public class NeuralNetwork implements Serializable {
                 }
                 // finally, we apply the given activation function on the calculated sum plus bias
                 layers[i].neurons[j].setValue(activationFunction.calculateActivation(inputsWeights + layers[i].neurons[j].bias));
-
             }
 
         }
@@ -148,7 +168,6 @@ public class NeuralNetwork implements Serializable {
 
     // gets the target output vector and trains the neural network (updates weights and biases) accordingly
     public void backPropagate(float[] targetOutputs) throws Exception {
-        float error;
 
 
         if(targetOutputs.length!=layers[layers.length-1].getNumberOfNeurons())
@@ -173,7 +192,7 @@ public class NeuralNetwork implements Serializable {
                 for(int j=0; j<neuron.deltas.length; j++){ // we update each weight according to calculated deltas
                     neuron.weights[j] += neuron.deltas[j];
                 }
-                neuron.bias += learningRate*neuron.error*activationFunction.calculateDerivative(neuron.getValue()); // we update the neuron bias according to error
+                neuron.bias += (learningRate)*neuron.error*activationFunction.calculateDerivative(neuron.getValue()); // we update the neuron bias according to error
             }
         }
     }
