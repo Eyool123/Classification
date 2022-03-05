@@ -15,7 +15,6 @@ import java.util.*;
 
 public class CorpusVec implements Serializable {
 
-    private List<PersonDataVec> personDataVecList;
 
 
     private Map<String, Integer> wordToIndex;
@@ -27,11 +26,16 @@ public class CorpusVec implements Serializable {
 
     public int[] sumOfDims;
 
+    public float[] maxValues; // max values of each feature, used for normalization
+
+
+
 
 
 
     //Corpus vec is used to migrate our corpus to a vector representation of tfidf features
     public CorpusVec(Corpus corpus, Tfidf tfidf){
+        List<PersonDataVec> personDataVecList;
 
         sumOfDims = new int[4];
         Arrays.fill(sumOfDims, 0);
@@ -83,6 +87,36 @@ public class CorpusVec implements Serializable {
             i++;
         }
 
+
+        this.initMaxValues();
+        CorpusVec.normalizeFeatures(featuresVec, this.maxValues);
+    }
+
+
+
+    public static void normalizeFeatures(float[][] featuresVec, float[] maxValuesM) {
+        // min max normalization for feature vector
+
+
+        for (int i=0; i<featuresVec[0].length; i++){
+            for (int j=0; j<featuresVec.length; j++){
+                featuresVec[j][i] = featuresVec[j][i]/ maxValuesM[i];
+            }
+        }
+
+
+    }
+
+    private void initMaxValues() {
+
+        maxValues = new float[featuresVec[0].length];
+        Arrays.fill(maxValues, 0);
+
+        for (int i=0; i<featuresVec[0].length; i++){
+            for (int j=0; j<featuresVec.length; j++){
+                maxValues[i] = Math.max(featuresVec[j][i], maxValues[i]);
+            }
+        }
     }
 
     public int getNumberOfDocuments(){

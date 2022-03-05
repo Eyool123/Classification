@@ -21,83 +21,36 @@ public class Main {
 
     public static void main(String[] args) {
 
-        DataPartition partition = DataPartition.loadDataFromFile(DIM1_DATA_PARTITION);
-        NeuralNetwork ntTest = NeuralNetwork.loadDataFromFile(DIM1_NEURAL_NETWORK);
-
+//
 //        generateDim1DataPartition();
 
+        DataPartition partition = DataPartition.loadDataFromFile(DIM1_DATA_PARTITION);
 
-
-//
         float[][] testInputs = partition.featuresVecTest;
         float[][] testOutputs = partition.classVecTest;
-        normlize(testInputs);
-        Evaluation.evaluateNeuralNetwork(ntTest,testInputs, testOutputs);
-
-//
-//
-//        for(int i=0; i<testInputs.length; i++){
-//            for(int j=0; j<testInputs[0].length; j++)
-//                testInputs[i][j] *= 1000;
-//        }
-//
-//        Evaluation.evaluateNeuralNetwork(ntTest,testInputs, testOutputs);
-
-
 
         float[][] trainingInputs = partition.featuresVecTrain;
         float[][] trainingOutputs = partition.classVecTrain;
 
-        normlize(trainingInputs);
+
+
+//        int[] neuronsPerLayer = {trainingInputs[0].length,400,  1};
 //
 //
-//        for(int i=0; i<trainingInputs.length; i++){
-//            for(int j=0; j<trainingInputs[0].length; j++)
-//                trainingInputs[i][j] *= 1000;
-//        }
+//
+//
+//        NeuralNetwork neuralNetwork = new NeuralNetwork(neuronsPerLayer, new SigmoidActivation(), new SquareError(), 1);
+        NeuralNetwork neuralNetwork = NeuralNetwork.loadDataFromFile(DIM1_NEURAL_NETWORK);
+        Evaluation.evaluateNeuralNetwork(neuralNetwork, testInputs, testOutputs);
 
-//        Evaluation.evaluateNeuralNetwork(ntTest,trainingInputs, trainingOutputs);
-
-
-
-
-
-
-
-
-        int[] neuronsPerLayer = {trainingInputs[0].length,400,  1};
-
-
-
-
-        NeuralNetwork neuralNetwork = new NeuralNetwork(neuronsPerLayer, new SigmoidActivation(), new SquareError(), 1);
 
         Evaluation.evaluateNeuralNetwork(neuralNetwork, trainingInputs, trainingOutputs);
 
-        neuralNetwork.fitNetwork(20, trainingInputs, trainingOutputs);
+        neuralNetwork.fitNetwork(15, trainingInputs, trainingOutputs);
         neuralNetwork.saveNetworkToFile(DIM1_NEURAL_NETWORK);
 
         Evaluation.evaluateNeuralNetwork(neuralNetwork, trainingInputs, trainingOutputs);
 
-
-    }
-
-    static void normlize(float[][] inputs){
-
-        float[] max = new float[inputs[0].length];
-        Arrays.fill(max, 0);
-
-        for (int i=0; i<inputs[0].length; i++){
-            for (int j=0; j<inputs.length; j++){
-                max[i] = Math.max(inputs[j][i], max[i]);
-            }
-        }
-
-        for (int i=0; i<inputs[0].length; i++){
-            for (int j=0; j<inputs.length; j++){
-                inputs[j][i] = inputs[j][i]/ max[i];
-            }
-        }
 
     }
 
