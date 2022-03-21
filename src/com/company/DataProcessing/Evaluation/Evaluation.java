@@ -34,8 +34,28 @@ public class Evaluation {
 
         }
 
-        System.out.println("Correct 0: "+correct0 +" incorrect0: "+wrong0);
-        System.out.println("Correct 1: "+correct1 +" incorrect1: "+wrong1);
+        System.out.println("Correct 0:\t"+correct0 +"\tincorrect 0:\t"+wrong0);
+        System.out.println("Correct 1:\t"+correct1 +"\tincorrect 1:\t"+wrong1);
+
+
+        float precision_0 = (float)correct0/(correct0+wrong1);
+        float recall_0 = (float)correct0/(correct0+wrong0);
+
+        System.out.println("0 Precision:\t"+precision_0);
+        System.out.println("0 Recall:\t"+recall_0);
+        System.out.println("0 F1Score:\t"+2f*(precision_0*recall_0)/(precision_0+recall_0));
+
+        float precision_1 = (float)correct1/(correct1+wrong0);
+        float recall_1 = (float)correct1/(correct1+wrong1);
+
+        System.out.println("1 Precision:\t"+precision_1);
+        System.out.println("1 Recall:\t"+recall_1);
+        System.out.println("1 F1Score:\t"+2f*(precision_1*recall_1)/(precision_1+recall_1));
+
+        System.out.println("Model AUC\t"+(float)(correct0+correct1)/(correct0+correct1+wrong0+wrong1));
+
+
+
 
 
 

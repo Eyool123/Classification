@@ -17,15 +17,16 @@ public class DataPartition implements Serializable {
 
 
     public DataPartition(CorpusVec corpusVec, int dimToSplit, float trainingPercentage){
+
         int fullLength = corpusVec.getNumberOfDocuments();
-        int trainLength = (int) (trainingPercentage*fullLength);
-        int testLength = fullLength - trainLength;
 
-        classVecTrain = new float[trainLength][1];
-        featuresVecTrain = new float[trainLength][];
 
-        classVecTest = new float[testLength][1];
-        featuresVecTest = new float[testLength][];
+//
+//        classVecTrain = new float[trainLength][1];
+//        featuresVecTrain = new float[trainLength][];
+//
+//        classVecTest = new float[testLength][1];
+//        featuresVecTest = new float[testLength][];
 
 
         int firstClass = corpusVec.sumOfDims[dimToSplit-1];
@@ -34,6 +35,19 @@ public class DataPartition implements Serializable {
 
         int firstClassInTrain = (int) (firstClass*trainingPercentage);
         int secondClassInTrain = (int) (secondClass*trainingPercentage);
+
+        int trainLength = firstClassInTrain+secondClassInTrain;
+        int testLength = fullLength - trainLength;
+
+
+        classVecTrain = new float[trainLength][1];
+        featuresVecTrain = new float[trainLength][];
+
+
+
+
+        classVecTest = new float[testLength][1];
+        featuresVecTest = new float[testLength][];
 
 
         int trainInd = 0;
@@ -88,10 +102,6 @@ public class DataPartition implements Serializable {
         System.out.println("Train ="+ classVecTrain.length);
 
         System.out.println("Test ="+ classVecTest.length);
-
-        System.out.println("ind train ="+ trainInd);
-        System.out.println("ind test ="+ testInd);
-
 
     }
 

@@ -86,16 +86,16 @@ public class Corpus implements Serializable {
 
 
 
-    public Corpus(Corpus corpus, int dimension, Enum type){
+    public Corpus(Corpus corpus, int dimension, Boolean isDim){
         this();
 
         for(PersonData data: corpus.getPersonDataList()){
-            if(data.getPersonalityType().getDim(dimension)==type){
+
+            if(data.getPersonalityType().isDim(dimension)==isDim){
                 WordFreq filteredWordFreq = new WordFreq();
 
                 //we iterate over each word freqMapCount and create a new word freqMap of filtered types only
                 for (Map.Entry<String, Integer> word : data.getPersonWordFreq().getWordCount().entrySet()){
-
 
                     filteredWordFreq.addWordMul(word.getKey(), word.getValue());
 
@@ -163,7 +163,40 @@ public class Corpus implements Serializable {
 
     }
 
-    public static Corpus createCorpusFromFile(String filepath){
+//    public static Corpus createCorpusFromFile(String filepath){
+//
+//        Corpus corpus = new Corpus();
+//
+//        BufferedReader reader = null;
+//        String line = "";
+//
+//        try {
+//            reader = new BufferedReader(new FileReader(filepath));
+//            line = reader.readLine(); // reads first header line
+//            int count = 0;
+//            while ((line = reader.readLine()) != null ) {
+//
+//                String[] row = parseString(line); //used to split between csv columns
+//
+//                String formattedString = formatStr(row[1]); //inital clear for the text
+//                String wordTokens[] = tokensProcessor(formattedString); //tokenizes the text and stemms the word
+//
+//                PersonData newPerson = new PersonData(row[2].replaceAll("[^a-zA-Z ]", "").toUpperCase(Locale.ROOT),wordTokens);
+//                corpus.addPersonToCorpus(newPerson);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            try {
+//                reader.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return corpus;
+//
+//    }
+public static Corpus createCorpusFromFile(String filepath){
 
         Corpus corpus = new Corpus();
 
@@ -176,13 +209,15 @@ public class Corpus implements Serializable {
             int count = 0;
             while ((line = reader.readLine()) != null ) {
 
-                String[] row = parseString(line); //used to split between csv columns
+                String[] row = line.split(",", 2); //used to split between csv columns
 
                 String formattedString = formatStr(row[1]); //inital clear for the text
-                String wordTokens[] = tokensProcessor(formattedString); //tokenizes the text and stemms the word
+                List<String> wordTokens = tokensProcessor(formattedString); //tokenizes the text and stemms the word
 
-                PersonData newPerson = new PersonData(row[2].replaceAll("[^a-zA-Z ]", "").toUpperCase(Locale.ROOT),wordTokens);
+                PersonData newPerson = new PersonData(row[0], wordTokens);
                 corpus.addPersonToCorpus(newPerson);
+
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -196,5 +231,55 @@ public class Corpus implements Serializable {
         return corpus;
 
     }
+
+    public static Corpus createCorpusFromImdbFile(String filepath){ //TODO REMOVE AND ADD ABOVE
+
+        Corpus corpus = new Corpus();
+
+        BufferedReader reader = null;
+        String line = "";
+
+        try {
+            reader = new BufferedReader(new FileReader(filepath));
+            line = reader.readLine(); // reads first header line
+            int count = 0;
+            while ((line = reader.readLine()) != null ) {
+
+                String[] row = line.split(",", 2); //used to split between csv columns
+
+                String formattedString = formatStr(row[0]); //inital clear for the text
+                List<String> wordTokens = tokensProcessor(formattedString); //tokenizes the text and stemms the word
+
+
+
+                if(row[1].equals("positive")){
+
+                    PersonData newPerson = new PersonData("INFJ", wordTokens);
+                    corpus.addPersonToCorpus(newPerson);
+
+                }else if(row[1].equals("negative")){
+                    PersonData newPerson = new PersonData("ENFJ", wordTokens);
+                    corpus.addPersonToCorpus(newPerson);
+                }
+
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return corpus;
+
+    }
+
+
+
+
+
 
 }

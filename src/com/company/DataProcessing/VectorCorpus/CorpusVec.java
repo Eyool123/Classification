@@ -8,17 +8,16 @@ import com.company.DataProcessing.Tfidf.DifferenceTFIDF;
 import com.company.DataProcessing.Tfidf.Tfidf;
 import com.company.DataProcessing.WordCorpus.Corpus;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 public class CorpusVec implements Serializable {
 
 
 
-    private Map<String, Integer> wordToIndex;
-    private String indexToWord[];
+    public Map<String, Integer> wordToIndex;
+    public String indexToWord[];
+    public Tfidf tfidf;
 
 
     public PersonalityType[] classVec;
@@ -35,6 +34,8 @@ public class CorpusVec implements Serializable {
 
     //Corpus vec is used to migrate our corpus to a vector representation of tfidf features
     public CorpusVec(Corpus corpus, Tfidf tfidf){
+        this.tfidf = tfidf;
+
         List<PersonDataVec> personDataVecList;
 
         sumOfDims = new int[4];
@@ -94,11 +95,17 @@ public class CorpusVec implements Serializable {
 
 
 
+    public static void normalizeDocument(float[] featuresVec, float[] maxValuesM){
+        for(int i=0; i<featuresVec.length; i++)
+            featuresVec[i] /= maxValuesM[i];
+    }
+
     public static void normalizeFeatures(float[][] featuresVec, float[] maxValuesM) {
         // min max normalization for feature vector
 
 
         for (int i=0; i<featuresVec[0].length; i++){
+
             for (int j=0; j<featuresVec.length; j++){
                 featuresVec[j][i] = featuresVec[j][i]/ maxValuesM[i];
             }
@@ -168,6 +175,7 @@ public class CorpusVec implements Serializable {
 
     }
 
+
     public void writeVecToCsv(String fileName){
         PrintWriter writer;
 
@@ -217,6 +225,23 @@ public class CorpusVec implements Serializable {
         }
 
 
+    }
+
+    public void saveCorpusVecToFile(String filePath){
+
+        try {
+
+            FileOutputStream fileOut = new FileOutputStream(filePath);
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+            objectOut.writeObject(this);
+            objectOut.close();
+            objectOut.flush();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            System.out.println("The corpus vec was successfully written to a file "+filePath);
+        }
 
     }
 }

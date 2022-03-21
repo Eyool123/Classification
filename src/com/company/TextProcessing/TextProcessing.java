@@ -1,9 +1,6 @@
 package com.company.TextProcessing;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class TextProcessing {
 
@@ -11,13 +8,13 @@ public class TextProcessing {
     private static Set<String> stopWords;
 
 
-    public static String[] tokensProcessor(String words) {
+    public static List<String> tokensProcessor(String words) {
 
 
         String allWords[] = words.split(" ");
 
 
-        List<String> tokens = new ArrayList<>();
+        List<String> tokens = new LinkedList<>();
 
 
         if(stopWords==null)
@@ -44,7 +41,7 @@ public class TextProcessing {
         }
 
 
-        return tokens.toArray(new String[0]);
+        return tokens;
 
     }
 

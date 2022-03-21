@@ -2,11 +2,13 @@ package com.company.DataProcessing;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class WordFreq implements Serializable {
 
     private Map<String, Integer> wordCount;
+
 
     public int getNumberOfWords() {
         return numberOfWords;
@@ -19,7 +21,7 @@ public class WordFreq implements Serializable {
         this.numberOfWords = 0;
     }
 
-    public WordFreq(String[] words){
+    public WordFreq(List<String> words){
         this();
         this.addAllWords(words);
     }
@@ -44,7 +46,7 @@ public class WordFreq implements Serializable {
             wordCount.put(word, n);
     }
 
-    public void addAllWords(String[] words){
+    public void addAllWords(List<String> words){
 
         for(String word : words){
             this.addWord(word);

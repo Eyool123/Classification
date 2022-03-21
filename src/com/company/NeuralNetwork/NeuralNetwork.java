@@ -1,5 +1,7 @@
 package com.company.NeuralNetwork;
 
+import com.company.DataProcessing.Evaluation.Evaluation;
+import com.company.Main;
 import com.company.NeuralNetwork.interfaces.IActivationFunction;
 import com.company.NeuralNetwork.interfaces.IErrorFunction;
 
@@ -44,7 +46,7 @@ public class NeuralNetwork implements Serializable {
     }
 
 
-    public void fitNetwork(int epochs, float[][] inputs, float[][] outputs)  {
+    public void fitNetwork(int epochs, float[][] inputs, float[][] outputs, float minimumAvgError)  {
 
 //        Random rnd = new Random();
         for (int i=0; i<epochs; i++){
@@ -53,6 +55,7 @@ public class NeuralNetwork implements Serializable {
             shuffleInputs(inputs, outputs);
 
             for(int j=0; j<inputs.length; j++){
+
                 try {
                     error += trainNetwork(inputs[j], outputs[j]);
                 } catch (Exception e) {
@@ -62,6 +65,8 @@ public class NeuralNetwork implements Serializable {
 
             error /= inputs.length;
             System.out.println("Epoch: "+(i+1)+" avg error: "+error);
+            if (error<minimumAvgError)
+                break;
         }
 
     }

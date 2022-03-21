@@ -3,11 +3,12 @@ package com.company.DataProcessing.Tfidf;
 import com.company.DataProcessing.WordCorpus.Corpus;
 import com.company.DataProcessing.WordFreq;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Tfidf {
+public class Tfidf implements Serializable {
 
     Map<String, Float> idf;
 
