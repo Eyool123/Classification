@@ -35,7 +35,7 @@ public class Main {
 
         int dim = 1;
 
-//        generateDimDataPartition(DIM1_DATA_PARTITION, dim);
+        generateDimDataPartition(DIM1_DATA_PARTITION, dim);
 
 
 //        generateimdbDataPartition();
@@ -59,26 +59,19 @@ public class Main {
         float[][] trainingOutputs = partition.classVecTrain;
 
 
-        int[] neuronsPerLayer = {trainingInputs[0].length, 1024, 1024, 1024, 1024, 1024, 1024
-                , 1};
+        int[] neuronsPerLayer = {trainingInputs[0].length, 800, 800,800,800,800, 1};
 //
 //
 //
 
-        NeuralNetwork neuralNetwork = new NeuralNetwork(neuronsPerLayer, new SigmoidActivation(), new SquareError(), 0.00001f);
+        NeuralNetwork neuralNetwork = new NeuralNetwork(neuronsPerLayer, new SigmoidActivation(), new SquareError(), 0.0004f);
 //        NeuralNetwork neuralNetwork = NeuralNetwork.loadDataFromFile(DIM1_NEURAL_NETWORK);
 //        Evaluation.evaluateNeuralNetwork(neuralNetwork, testInputs, testOutputs);
 
 
 //        Evaluation.evaluateNeuralNetwork(neuralNetwork, trainingInputs, trainingOutputs);
-        neuralNetwork.fitNetwork(10, trainingInputs, trainingOutputs, 0.05f);
+        neuralNetwork.fitNetwork(20, trainingInputs, trainingOutputs, 0.007f);
 
-        for (int i=1; i<2; i++){
-            System.out.println("iteration: "+i);
-            Evaluation.evaluateNeuralNetwork(neuralNetwork, testInputs, testOutputs);
-
-
-        }
 
 //        neuralNetwork.fitNetwork(8, trainingInputs, trainingOutputs);
         neuralNetwork.saveNetworkToFile(DIM1_NEURAL_NETWORK);
@@ -93,6 +86,21 @@ public class Main {
 
 
     }
+
+
+
+
+    static PersonalityClassification createPersonalityClassificationModel(){
+
+        PersonalityClassification personalityClassification = new PersonalityClassification();
+
+
+
+
+
+
+    }
+
 
     static void generateDimDataPartition(String dataPartitionFile, int dimToSplit ) {
 
@@ -128,7 +136,6 @@ public class Main {
         PersonalityClassification personalityClassification = PersonalityClassification.loadDataFromFile(PERSONALITY_CLASSIFICATION_PATH);
         personalityClassification.setSampleGenerator(sampleGenerator, dimToSplit);
         personalityClassification.savePersonalityClassificationToFile(PERSONALITY_CLASSIFICATION_PATH);
-
 
 
     }
