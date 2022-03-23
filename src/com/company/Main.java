@@ -32,25 +32,46 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
+        PersonalityClassification personalityClassification = createPersonalityClassificationModel();
+        personalityClassification.savePersonalityClassificationToFile(PERSONALITY_CLASSIFICATION_PATH);
 
-        int dim = 1;
-
-        generateDimDataPartition(DIM1_DATA_PARTITION, dim);
+    }
 
 
-//        generateimdbDataPartition();
 
-//        PersonalityClassification personalityClassification = PersonalityClassification.loadDataFromFile(PERSONALITY_CLASSIFICATION_PATH);
+
+    static PersonalityClassification createPersonalityClassificationModel(){
+
+
         PersonalityClassification personalityClassification = new PersonalityClassification();
 
-//        while (i<100){
-//            classifyText(personalityClassification);
-//        }
+        for (int i=1; i<=4; i++){// for each dimension
+            System.out.println("Started Dimension: "+i);
+
+            CorpusVec dimCorpusVec = generateDimCorpusVector(i);
+
+            DataPartition dataPartition = new DataPartition(dimCorpusVec, i, 0.75f);
+
+            SampleGenerator dimSampleGenerator = new SampleGenerator(dimCorpusVec);
+
+            personalityClassification.setSampleGenerator(dimSampleGenerator, i);
+
+            NeuralNetwork dimNeuralNetwork = createAndTrainNeuralNetwork(dataPartition);
+
+            personalityClassification.setSampleGenerator(dimSampleGenerator, i);
+
+            personalityClassification.setNeuralNetwork(dimNeuralNetwork, i);
+
+
+        }
+
+        return personalityClassification;
 
 
 
+    }
 
-        DataPartition partition = DataPartition.loadDataFromFile(DIM1_DATA_PARTITION);
+    private static NeuralNetwork createAndTrainNeuralNetwork(DataPartition partition) {
 
         float[][] testInputs = partition.featuresVecTest;
         float[][] testOutputs = partition.classVecTest;
@@ -60,49 +81,23 @@ public class Main {
 
 
         int[] neuronsPerLayer = {trainingInputs[0].length, 800, 800,800,800,800, 1};
-//
-//
-//
 
-        NeuralNetwork neuralNetwork = new NeuralNetwork(neuronsPerLayer, new SigmoidActivation(), new SquareError(), 0.0004f);
-//        NeuralNetwork neuralNetwork = NeuralNetwork.loadDataFromFile(DIM1_NEURAL_NETWORK);
-//        Evaluation.evaluateNeuralNetwork(neuralNetwork, testInputs, testOutputs);
+        NeuralNetwork neuralNetwork = new NeuralNetwork(neuronsPerLayer, new SigmoidActivation(), new SquareError(), 0.0001f);
 
-
-//        Evaluation.evaluateNeuralNetwork(neuralNetwork, trainingInputs, trainingOutputs);
-        neuralNetwork.fitNetwork(20, trainingInputs, trainingOutputs, 0.007f);
-
-
-//        neuralNetwork.fitNetwork(8, trainingInputs, trainingOutputs);
-        neuralNetwork.saveNetworkToFile(DIM1_NEURAL_NETWORK);
-
-//        PersonalityClassification personalityClassification = PersonalityClassification.loadDataFromFile(PERSONALITY_CLASSIFICATION_PATH);
-        personalityClassification.setNeuralNetwork(neuralNetwork, dim);
-        personalityClassification.savePersonalityClassificationToFile(PERSONALITY_CLASSIFICATION_PATH);
-
+        neuralNetwork.fitNetwork(20, trainingInputs, trainingOutputs, 0.03f);
 
         Evaluation.evaluateNeuralNetwork(neuralNetwork, trainingInputs, trainingOutputs);
         Evaluation.evaluateNeuralNetwork(neuralNetwork, testInputs, testOutputs);
 
 
-    }
-
-
-
-
-    static PersonalityClassification createPersonalityClassificationModel(){
-
-        PersonalityClassification personalityClassification = new PersonalityClassification();
-
-
-
+        return neuralNetwork;
 
 
 
     }
 
 
-    static void generateDimDataPartition(String dataPartitionFile, int dimToSplit ) {
+    static CorpusVec generateDimCorpusVector(int dimToSplit ) {
 
         Corpus corpus = Corpus.createCorpusFromFile(KAGGLE_CSV_PATH); // create a corpus from whole csv comments file
         System.out.println("corpus read successfully");
@@ -124,18 +119,8 @@ public class Main {
         CorpusVec corpusVec = new CorpusVec(filteredCorpus, tfidfDim1);
         System.out.println("Corpus vector created");
 
+        return corpusVec;
 
-        DataPartition dataPartition = new DataPartition(corpusVec, dimToSplit, 0.8f);
-        System.out.println("Data partition created");
-
-        dataPartition.saveDataToFile(dataPartitionFile);
-
-
-        SampleGenerator sampleGenerator = new SampleGenerator(corpusVec);
-
-        PersonalityClassification personalityClassification = PersonalityClassification.loadDataFromFile(PERSONALITY_CLASSIFICATION_PATH);
-        personalityClassification.setSampleGenerator(sampleGenerator, dimToSplit);
-        personalityClassification.savePersonalityClassificationToFile(PERSONALITY_CLASSIFICATION_PATH);
 
 
     }

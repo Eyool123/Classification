@@ -16,6 +16,8 @@ public class DataPartition implements Serializable {
 
 
 
+
+
     public DataPartition(CorpusVec corpusVec, int dimToSplit, float trainingPercentage){
 
         int fullLength = corpusVec.getNumberOfDocuments();
